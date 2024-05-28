@@ -1,0 +1,16 @@
+[Unit]
+Description=BestEducation  backend
+After=syslog.target
+After=network.target
+
+[Service]
+Restart=always
+RestartSec=2s
+MemoryLimit=1G
+User=root
+Group=root
+WorkingDirectory=/root/BestEducation/backend/
+ExecStart=/root/BestEducation/backend/venv/bin/python /root/BestEducation/backend/manage.py runserver 147.45.158.162:9060
+
+[Install]
+WantedBy=multi-user.target
