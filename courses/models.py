@@ -146,6 +146,8 @@ class Course(models.Model):
         count = 0
         for module in self.modules():
             count += module.finished_lessons(user=user)
+        if self.count_lessons() == 0:
+            return 0
         return count * 100 / self.count_lessons()
     
     def length(self):
