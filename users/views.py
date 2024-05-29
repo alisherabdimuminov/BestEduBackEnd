@@ -2,7 +2,9 @@ from django.shortcuts import render, get_object_or_404, get_list_or_404
 from django.http import HttpRequest
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 
 from .models import User
 from .serializers import UserGETSerializer, UserPOSTSerializer
@@ -78,6 +80,28 @@ def update_user(request: HttpRequest, id):
             "errors": errors,
             "data": None
         })
+    
+@api_view(http_method_names=["POST"])
+@authentication_classes(authentication_classes=[TokenAuthentication])
+@permission_classes(permission_classes=[IsAuthenticated])
+def change_password(request: HttpRequest):
+    password = request.data.get("password")
+    if not password:
+        return Response({
+            "status": "error",
+            "errors": {
+                1: "password is not found",
+            }
+        })
+    user = request.user
+    user.set_password(raw_password=password)
+    user.save()
+    return Response({
+        "status": "success",
+        "errors": {},
+        "data": {}
+    })
+
 
 # login handler
 @api_view(['POST'])

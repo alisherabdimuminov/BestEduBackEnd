@@ -7,6 +7,7 @@ from .views import (
     login,
     signup,
     get_users_count,
+    change_password,
 )
 
 
@@ -20,4 +21,5 @@ urlpatterns = [
     path('signup/', signup, name='signup'),
 
     path('count/', get_users_count, name="get_users_count"),
+    path('change_password/', change_password, name="change_password"),
 ]
