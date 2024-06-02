@@ -22,6 +22,8 @@ from .serializers import (
     LessonModuleSerializer,
     CourseModelAllSerializer,
     CourseModelOneSerializer,
+    LessonPostSerializer,
+    ModulePostSerializer,
 )
 
 
@@ -228,4 +230,48 @@ def my_courses(request: HttpRequest):
         "data": {
             "courses": courses
         }
+    })
+
+
+@api_view(http_method_names=["POST"])
+@authentication_classes(authentication_classes=[TokenAuthentication])
+@permission_classes(permission_classes=[IsAuthenticated])
+def add_lesson(request: HttpRequest, course_id: int, module_id: int):
+    course = get_object_or_404(Course, pk=course_id)
+    module = get_object_or_404(Module, pk=module_id)
+    request.data["module"] = module.pk
+    lesson = LessonPostSerializer(Lesson, data=request.data)
+    if lesson.is_valid():
+        l = lesson.create(lesson.validated_data)
+        previous = Lesson.objects.filter(pk=request.data.get("previous"))
+        if previous:
+            previous = previous.first()
+            previous.next = l
+            previous.save()
+    else:
+        print(lesson.errors)
+    return Response({
+        "status": "success",
+        "errors": {},
+        "data": {}
+    })
+
+
+@api_view(http_method_names=["POST"])
+@authentication_classes(authentication_classes=[TokenAuthentication])
+@permission_classes(permission_classes=[IsAuthenticated])
+def add_module(request: HttpRequest, course_id: int):
+    course = get_object_or_404(Course, pk=course_id)
+    data = request.data.dict()
+    print(data)
+    data["course"] = course.pk
+    module = ModulePostSerializer(Module, data=data)
+    if module.is_valid():
+        module.create(module.validated_data)
+    else:
+        print(module.errors)
+    return Response({
+        "status": "success",
+        "errors": {},
+        "data": {}
     })

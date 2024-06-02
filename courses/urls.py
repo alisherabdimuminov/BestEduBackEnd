@@ -12,6 +12,8 @@ from .views import (
     update_course,
     end_lesson,
     my_courses,
+    add_lesson,
+    add_module,
 )
 
 
@@ -26,6 +28,8 @@ urlpatterns = [
     path('course/<int:course_id>/modules/module/<int:module_id>/', get_course_module, name="module"),
     path('course/<int:course_id>/modules/module/<int:module_id>/lessons/', get_module_lessons, name="lessons"),
     path('course/<int:course_id>/modules/module/<int:module_id>/lessons/lesson/<int:lesson_id>/', get_module_lesson, name="lesson"),
+    path('course/<int:course_id>/modules/add_module/', add_module, name="add_module"),
+    path('course/<int:course_id>/modules/module/<int:module_id>/add_lesson/', add_lesson, name="add_lesson"),
 
     path('create/', create_course, name="create_course"),
     path('course/<int:id>/update/', update_course, name="update_course"),

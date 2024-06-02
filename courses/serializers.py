@@ -82,6 +82,11 @@ class LessonModelSerializer(serializers.ModelSerializer):
         model = Lesson
         fields = ("id", "name", "type", "video", "duration", "resource", "quiz", "previous", "next", "finishers", "is_open")
 
+class ModuleRequiredSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Module
+        fields = ("id", "name", )
+
 
 class ModuleSerializer(serializers.ModelSerializer):
     requires_context = True
@@ -94,7 +99,8 @@ class ModuleSerializer(serializers.ModelSerializer):
         return False
     
     is_open = serializers.SerializerMethodField("get_user")
-    required = serializers.PrimaryKeyRelatedField(many=False, queryset=Module.objects.all())
+    # required = serializers.PrimaryKeyRelatedField(many=False, queryset=Module.objects.all())
+    required = ModuleRequiredSerializer(Module.objects.all(), many=False)
     students = UserSerializer(User.objects.all(), many=True)
     finishers = UserSerializer(User.objects.all(), many=True)
     lessons = LessonModuleSerializer(Lesson.objects.all(), many=True)
@@ -163,3 +169,14 @@ class CourseCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = ("name", "image", "subject", "description", "price", "author")
+
+
+class LessonPostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Lesson
+        fields = ("name", "module", "video", "duration", "resource", "type", "previous")
+
+class ModulePostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Module
+        fields = ("name", "course", "required")
