@@ -150,8 +150,10 @@ class CourseModelOneSerializer(serializers.ModelSerializer):
 class CourseCreateSerializer(serializers.ModelSerializer):
     requires_context = True
     author = serializers.PrimaryKeyRelatedField(read_only=True)
+    image = serializers.ImageField(required=False)
 
     def create(self, validated_data):
+        print(validated_data)
         course = Course.objects.create(
             author=self.context.get("request").user,
             **validated_data

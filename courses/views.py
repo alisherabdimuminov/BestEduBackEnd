@@ -168,11 +168,13 @@ def end_lesson(request: HttpRequest):
 def create_course(request: HttpRequest):
     course_serializer = CourseCreateSerializer(Course, data=request.data, context={"request": request})
     if course_serializer.is_valid():
-        course_serializer.create(course_serializer.validated_data)
+        c = course_serializer.create(course_serializer.validated_data)
         return Response({
             "status": "success",
             "errors": {},
-            "data": {}
+            "data": {
+                "id": c.pk
+            }
         })
     else:
         errors = {}
@@ -189,6 +191,7 @@ def create_course(request: HttpRequest):
 @permission_classes(permission_classes=[IsAuthenticated])
 def update_course(request: HttpRequest, id):
     course = get_object_or_404(Course, pk=id)
+    print(request.data)
     course_serializer = CourseCreateSerializer(course, data=request.data, context={"request": request})
     if course_serializer.is_valid():
         course_serializer.save()

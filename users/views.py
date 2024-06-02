@@ -12,6 +12,8 @@ from .serializers import UserGETSerializer, UserPOSTSerializer
 
 # get all users handler
 @api_view(http_method_names=["GET"])
+@authentication_classes(authentication_classes=[TokenAuthentication])
+@permission_classes(permission_classes=[IsAuthenticated])
 def get_all_users(request: HttpRequest):
     role = request.GET.get("role")
     users_queryset = User.objects.all()
@@ -30,6 +32,8 @@ def get_all_users(request: HttpRequest):
     })
 
 @api_view(http_method_names=["GET"])
+@authentication_classes(authentication_classes=[TokenAuthentication])
+@permission_classes(permission_classes=[IsAuthenticated])
 def get_users_count(request: HttpRequest):
     users_queryset = User.objects.all()
     s = users_queryset.filter(is_student=True).count()
@@ -47,6 +51,8 @@ def get_users_count(request: HttpRequest):
 
 # get one user handler
 @api_view(http_method_names=["GET"])
+@authentication_classes(authentication_classes=[TokenAuthentication])
+@permission_classes(permission_classes=[IsAuthenticated])
 def get_one_user(request: HttpRequest, id):
     user_queryset = get_object_or_404(User, pk=id)
     user = UserGETSerializer(user_queryset).data
@@ -60,6 +66,8 @@ def get_one_user(request: HttpRequest, id):
 
 # update user handler
 @api_view(http_method_names=["POST"])
+@authentication_classes(authentication_classes=[TokenAuthentication])
+@permission_classes(permission_classes=[IsAuthenticated])
 def update_user(request: HttpRequest, id):
     data = request.data
     user = get_object_or_404(User, pk=id)
@@ -182,3 +190,18 @@ def signup(request: HttpRequest):
             "errors": errors,
             "data": None
         })
+
+@api_view(http_method_names=["POST"])
+@authentication_classes(authentication_classes=[TokenAuthentication])
+@permission_classes(permission_classes=[IsAuthenticated])
+def logout(request: HttpRequest):
+    user = request.user
+    token = Token.objects.filter(user=user)
+    if token:
+        token.first().delete()
+        Token.objects.create(user=user)
+    return Response({
+        "status": "success",
+        "errors": {},
+        "data": {}
+    })
