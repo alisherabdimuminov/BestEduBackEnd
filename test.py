@@ -1,4 +1,4 @@
-# import requests
+import requests
 
 # # url = "http://localhost:8000/users/user/1/edit/"
 
@@ -15,10 +15,10 @@
 # # print(res.text)
 
 # url = "http://147.45.158.162:9060/courses/"
-# data = {
-#     "username": "hello",
-#     "password": "123"
-# }
+data = {
+    "username": "hello",
+    "password": "123"
+}
 
 # headers = {
 #     "Authorization": 'Token f5783617d3524fbabc7d499107b98aa57b7a10f7'
@@ -26,7 +26,7 @@
 
 # res = requests.get(url, headers=headers)
 
-# # url = "http://localhost:8000/users/signup/"
+url = "http://localhost:8000/users/signup/"
 
 # # data = {
 # #     "username": "hello",
@@ -37,13 +37,6 @@
 # #     "password": "123"
 # # }
 
-# # res = requests.post(url, data)
+res = requests.post(url, data)
 
-# print(res.text)
-
-import requests
-
-url = "https://edonation.uz/donate/?user=490"
-
-res = requests.get(url=url, allow_redirects=True)
 print(res.text)

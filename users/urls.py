@@ -20,7 +20,7 @@ urlpatterns = [
     # authorization
     path('login/', login, name='login'),
     path('signup/', signup, name='signup'),
-    path('logout/', signup, name='logout'),
+    path('logout/', logout, name='logout'),
 
     path('count/', get_users_count, name="get_users_count"),
     path('change_password/', change_password, name="change_password"),
