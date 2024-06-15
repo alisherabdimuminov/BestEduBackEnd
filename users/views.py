@@ -7,7 +7,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 
 from .models import User
-from .serializers import UserGETSerializer, UserPOSTSerializer
+from .serializers import UserGETSerializer, UserPOSTSerializer, UserSignUpSerializer
 
 
 # get all users handler
@@ -173,7 +173,7 @@ def login(request: HttpRequest):
 @api_view(http_method_names=["POST"])
 def signup(request: HttpRequest):
     data = request.data
-    user = UserPOSTSerializer(data=data)
+    user = UserSignUpSerializer(data=data)
     if user.is_valid():
         user.save()
         return Response({
