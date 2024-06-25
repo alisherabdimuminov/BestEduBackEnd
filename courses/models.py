@@ -245,6 +245,3 @@ class Check(models.Model):
 
     def __str__(self):
         return self.status
-    
-    def amount(self):
-        return self.amount
