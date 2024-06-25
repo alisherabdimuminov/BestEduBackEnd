@@ -18,6 +18,7 @@ from .serializers import (
     ModuleSerializer,
     SubjectSerializer,
     ModulePostSerializer,
+    CheckModelSerializer,
     LessonPostSerializer,
     LessonModelSerializer,
     CourseCreateSerializer,
@@ -359,4 +360,19 @@ def add_module(request: HttpRequest, course_id: int):
         "status": "success",
         "errors": {},
         "data": {}
+    })
+
+
+@api_view(http_method_names=["POST"])
+@permission_classes(permission_classes=[IsAuthenticated])
+@authentication_classes(authentication_classes=[TokenAuthentication])
+def checks(request: HttpRequest):
+    checks_obj = Check.objects.all()
+    checks = CheckModelSerializer(checks_obj, many=True)
+    return Response({
+        "status": "success",
+        "errors": {},
+        "data": {
+            "checks": checks.data,
+        },
     })

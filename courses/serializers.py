@@ -7,7 +7,8 @@ from .models import (
     Quiz,
     Question,
     Answer,
-    Subject
+    Subject,
+    Check,
 )
 from users.models import User
 
@@ -180,3 +181,11 @@ class ModulePostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Module
         fields = ("name", "course", "required")
+
+    
+class CheckModelSerializer(serializers.ModelSerializer):
+    author = UserSerializer(User, many=False)
+    course = CourseModelOneSerializer(Course, many=False)
+    class Meta:
+        model = Check
+        fields = ("author", "course", "order__amount", "created", )
