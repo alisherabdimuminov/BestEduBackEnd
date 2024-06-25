@@ -22,9 +22,10 @@ INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
     # extra apps
+    'payme',
+    'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
-    'corsheaders',
 
     # local apps
     'users',
@@ -51,7 +52,7 @@ STORAGES = {
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    "corsheaders.middleware.CorsMiddleware", # cors middleware
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -118,3 +119,15 @@ MEDI_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+PAYME: dict = {
+    'PAYME_ID': '667719e692c90451bb1a694b',
+    # 'PAYME_KEY': '?VigcWqFeadRdP1%12ansP&t?21xyEu9mdk&', # test
+    'PAYME_KEY': '738mB%HI863IW%U1BBOwnDnz#qSEdPEqRW&Z', #production,
+    'PAYME_URL': 'https://checkout.paycom.uz',
+    'PAYME_CALL_BACK_URL': 'https://3daa-185-213-230-162.ngrok-free.app',
+    'PAYME_MIN_AMOUNT': '1', 
+    'PAYME_ACCOUNT': 'order_id',
+}
+
+ORDER_MODEL = "users.models.Order"

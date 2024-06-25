@@ -24,3 +24,6 @@ class UserPOSTSerializer(serializers.ModelSerializer):
         model = User
         fields = ["username", "first_name", "last_name", "middle_name", "bio", "image", "is_student"]
 
+class GeneratePayLinkSerializer(serializers.Serializer):
+    order_id = serializers.IntegerField()
+    amount = serializers.IntegerField()

@@ -1,35 +1,120 @@
 from django.http import HttpRequest
+from payme.views import MerchantAPIView
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
+from payme.methods.generate_link import GeneratePayLink
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 
 from .models import (
+    Check,
     Course,
     Module,
     Lesson,
-    Quiz,
-    Question,
-    Answer,
-    Subject
+    Subject,
 )
 from .serializers import (
     ModuleSerializer,
     SubjectSerializer,
+    ModulePostSerializer,
+    LessonPostSerializer,
     LessonModelSerializer,
     CourseCreateSerializer,
     LessonModuleSerializer,
     CourseModelAllSerializer,
     CourseModelOneSerializer,
-    LessonPostSerializer,
-    ModulePostSerializer,
 )
+from users.models import Order
+
+
+
+
+def buy(check: Check):
+    if check.status == 1 or check.status == "1":
+        course = check.course
+        user = check.author
+        course.students.add(user)
+
+
+@api_view(http_method_names=["POST"])
+@permission_classes(permission_classes=[IsAuthenticated])
+@authentication_classes(authentication_classes=[TokenAuthentication])
+def order_course(request: HttpRequest):
+    course_id = request.data.get("course")
+    course = get_object_or_404(Course, pk=course_id)
+    order = Order.objects.create(
+        amount=course.price*100
+    )
+    return Response({
+        "status": "success",
+        "errors": {},
+        "data": {
+            "order_id": order.pk
+        }
+    })
+
+
+@api_view(http_method_names=["POST"])
+@permission_classes(permission_classes=[IsAuthenticated])
+@authentication_classes(authentication_classes=[TokenAuthentication])
+def buy_course(request: HttpRequest):
+    user = request.user
+    order_id = request.data.get("order_id")
+    course_id = request.data.get("course")
+    order = Order.objects.filter(pk=order_id)
+    if not order:
+        return Response({
+            "status": "error",
+            "errors": {
+                "order_id": "order not found",
+            },
+            "data": {}
+        })
+    order = order.first()
+    course = get_object_or_404(Course, pk=course_id)
+    check = Check.objects.filter(order=order)
+    if check:
+        return Response({
+            "status": "error",
+            "errors": {
+                "order_id": "order duplicated."
+            },
+            "data": {}
+        })
+    check = Check.objects.create(
+        author=user,
+        course=course,
+        order=order,
+        status="0",
+    )
+    return Response({
+        "status": "success",
+        "errors": {},
+        "data": {
+            "link": GeneratePayLink(order_id=order.pk, amount=order.amount).generate_link()
+        }
+    })
+
+
+class PaymentCallBackApiView(MerchantAPIView):
+    def create_transaction(self, order_id, action) -> None:
+        print("order_id:", order_id, "action:", action)
+
+    def perform_transaction(self, order_id, action) -> None:
+        order = Order.objects.filter(pk=order_id)
+        if order:
+            order = order.first()
+            check = Check.objects.filter(order=order)
+            if check:
+                check = check.first()
+                buy(check=check)
+        print("To'landi", "order_id:", order_id, "action:", action)
 
 
 @api_view(http_method_names=["GET"])
-@authentication_classes(authentication_classes=[TokenAuthentication])
 @permission_classes(permission_classes=[IsAuthenticated])
+@authentication_classes(authentication_classes=[TokenAuthentication])
 def get_all_subjects(request: HttpRequest):
     subjects_queryset = Subject.objects.all()
     subjects = SubjectSerializer(subjects_queryset, many=True).data
@@ -43,8 +128,8 @@ def get_all_subjects(request: HttpRequest):
 
 
 @api_view(http_method_names=["GET"])
-@authentication_classes(authentication_classes=[TokenAuthentication])
 @permission_classes(permission_classes=[IsAuthenticated])
+@authentication_classes(authentication_classes=[TokenAuthentication])
 def get_all_courses(request: HttpRequest):
     name = request.GET.get("name") or ""
     subject = request.GET.get("subject") or 0
@@ -62,8 +147,8 @@ def get_all_courses(request: HttpRequest):
 
 
 @api_view(http_method_names=["GET"])
-@authentication_classes(authentication_classes=[TokenAuthentication])
 @permission_classes(permission_classes=[IsAuthenticated])
+@authentication_classes(authentication_classes=[TokenAuthentication])
 def get_one_course(request, id):
     course_queryset = get_object_or_404(Course, pk=id)
     course = CourseModelOneSerializer(course_queryset, context={"request": request}).data
@@ -77,8 +162,8 @@ def get_one_course(request, id):
 
 
 @api_view(http_method_names=["GET"])
-@authentication_classes(authentication_classes=[TokenAuthentication])
 @permission_classes(permission_classes=[IsAuthenticated])
+@authentication_classes(authentication_classes=[TokenAuthentication])
 def get_course_modules(request: HttpRequest, course_id: int):
     course = get_object_or_404(Course, pk=course_id)
     modules_queryset = Module.objects.filter(course=course)
@@ -97,8 +182,8 @@ def get_course_modules(request: HttpRequest, course_id: int):
 
 
 @api_view(http_method_names=["GET"])
-@authentication_classes(authentication_classes=[TokenAuthentication])
 @permission_classes(permission_classes=[IsAuthenticated])
+@authentication_classes(authentication_classes=[TokenAuthentication])
 def get_course_module(request: HttpRequest, course_id: int, module_id):
     course = get_object_or_404(Course, pk=course_id)
     module_queryset = get_object_or_404(Module, pk=module_id)
@@ -117,8 +202,8 @@ def get_course_module(request: HttpRequest, course_id: int, module_id):
 
 
 @api_view(http_method_names=["GET"])
-@authentication_classes(authentication_classes=[TokenAuthentication])
 @permission_classes(permission_classes=[IsAuthenticated])
+@authentication_classes(authentication_classes=[TokenAuthentication])
 def get_module_lessons(request: HttpRequest, course_id: int, module_id: int):
     course = get_object_or_404(Course, pk=course_id)
     module_queryset = get_object_or_404(Module, pk=module_id)
@@ -134,8 +219,8 @@ def get_module_lessons(request: HttpRequest, course_id: int, module_id: int):
 
 
 @api_view(http_method_names=["GET"])
-@authentication_classes(authentication_classes=[TokenAuthentication])
 @permission_classes(permission_classes=[IsAuthenticated])
+@authentication_classes(authentication_classes=[TokenAuthentication])
 def get_module_lesson(request: HttpRequest, course_id: int, module_id: int, lesson_id: int):
     course = get_object_or_404(Course, pk=course_id)
     module = get_object_or_404(Module, pk=module_id)
@@ -151,8 +236,8 @@ def get_module_lesson(request: HttpRequest, course_id: int, module_id: int, less
 
 
 @api_view(http_method_names=["POST"])
-@authentication_classes(authentication_classes=[TokenAuthentication])
 @permission_classes(permission_classes=[IsAuthenticated])
+@authentication_classes(authentication_classes=[TokenAuthentication])
 def end_lesson(request: HttpRequest):
     lesson_id = request.data.get("id")
     lesson = get_object_or_404(Lesson, pk=lesson_id)
@@ -165,8 +250,8 @@ def end_lesson(request: HttpRequest):
 
 
 @api_view(http_method_names=["POST"])
-@authentication_classes(authentication_classes=[TokenAuthentication])
 @permission_classes(permission_classes=[IsAuthenticated])
+@authentication_classes(authentication_classes=[TokenAuthentication])
 def create_course(request: HttpRequest):
     course_serializer = CourseCreateSerializer(Course, data=request.data, context={"request": request})
     if course_serializer.is_valid():
@@ -189,11 +274,10 @@ def create_course(request: HttpRequest):
         })
     
 @api_view(http_method_names=["POST"])
-@authentication_classes(authentication_classes=[TokenAuthentication])
 @permission_classes(permission_classes=[IsAuthenticated])
+@authentication_classes(authentication_classes=[TokenAuthentication])
 def update_course(request: HttpRequest, id):
     course = get_object_or_404(Course, pk=id)
-    print(request.data)
     course_serializer = CourseCreateSerializer(course, data=request.data, context={"request": request})
     if course_serializer.is_valid():
         course_serializer.save()
@@ -213,8 +297,8 @@ def update_course(request: HttpRequest, id):
         })
     
 @api_view(http_method_names=["GET"])
-@authentication_classes(authentication_classes=[TokenAuthentication])
 @permission_classes(permission_classes=[IsAuthenticated])
+@authentication_classes(authentication_classes=[TokenAuthentication])
 def my_courses(request: HttpRequest):
     courses = []
     for course in Course.objects.all():
@@ -234,8 +318,8 @@ def my_courses(request: HttpRequest):
 
 
 @api_view(http_method_names=["POST"])
-@authentication_classes(authentication_classes=[TokenAuthentication])
 @permission_classes(permission_classes=[IsAuthenticated])
+@authentication_classes(authentication_classes=[TokenAuthentication])
 def add_lesson(request: HttpRequest, course_id: int, module_id: int):
     course = get_object_or_404(Course, pk=course_id)
     module = get_object_or_404(Module, pk=module_id)
@@ -258,12 +342,11 @@ def add_lesson(request: HttpRequest, course_id: int, module_id: int):
 
 
 @api_view(http_method_names=["POST"])
-@authentication_classes(authentication_classes=[TokenAuthentication])
 @permission_classes(permission_classes=[IsAuthenticated])
+@authentication_classes(authentication_classes=[TokenAuthentication])
 def add_module(request: HttpRequest, course_id: int):
     course = get_object_or_404(Course, pk=course_id)
     data = request.data.dict()
-    print(data)
     data["course"] = course.pk
     module = ModulePostSerializer(Module, data=data)
     if module.is_valid():

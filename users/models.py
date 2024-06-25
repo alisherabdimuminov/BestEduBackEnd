@@ -20,3 +20,7 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
+
+
+class Order(models.Model):
+    amount = models.IntegerField(default=0, verbose_name="Buyurtma raqami")

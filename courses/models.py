@@ -1,18 +1,25 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 
-from users.models import User
+from users.models import Order, User
 
 
 LESSON_TYPE = (
     ("lesson", "Lesson"),
     ("quiz", "Quiz"),
 )
+
 QUESTION_TYPE = (
     ("one_select", "One select"),
     ("multi_select", "Multi select"),
     ("matchable", "Matchable"),
     ("writeable", "Writeable")
+)
+
+CHECK_STATUS_TYPE = (
+    (0, "Kutilmoqda"),
+    (1, "To'langan"),
+    (-1, "Bekor qilingan"),
 )
 
 
@@ -226,3 +233,15 @@ class Lesson(models.Model):
     
     def end_lesson(self, user: User):
         self.finishers.add(user)
+
+
+class Check(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Foydalanuvchi")
+    module = models.ForeignKey(Module, on_delete=models.CASCADE, verbose_name="Module")
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, verbose_name="Buyurtma raqami")
+    status = models.CharField(max_length=2, choices=CHECK_STATUS_TYPE, verbose_name="Holati")
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.status

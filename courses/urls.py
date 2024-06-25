@@ -1,19 +1,22 @@
 from django.urls import path
 
 from .views import (
-    get_all_courses,
-    get_one_course,
-    get_all_subjects,
-    get_course_module,
-    get_course_modules,
-    get_module_lessons,
-    get_module_lesson,
+    buy_course,
+    my_courses,
+    end_lesson,
+    add_module,
+    add_lesson,
+    order_course,
     create_course,
     update_course,
-    end_lesson,
-    my_courses,
-    add_lesson,
-    add_module,
+    get_one_course,
+    get_all_courses,
+    get_all_subjects,
+    get_module_lesson,
+    get_course_module,
+    get_module_lessons,
+    get_course_modules,
+    PaymentCallBackApiView,
 )
 
 
@@ -35,4 +38,8 @@ urlpatterns = [
     path('course/<int:id>/update/', update_course, name="update_course"),
     path('end/', end_lesson, name="end_lesson"),
     path('my/', my_courses, name="my_courses"),
+
+    path("buy/", buy_course, name="buy_course"),
+    path("order/", order_course, name="order_course"),
+    path("payments/merchant/", PaymentCallBackApiView.as_view(), name="payments"),
 ]
