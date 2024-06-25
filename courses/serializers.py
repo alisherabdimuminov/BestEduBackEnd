@@ -187,4 +187,4 @@ class CheckModelSerializer(serializers.ModelSerializer):
     author = UserSerializer(User, many=False)
     class Meta:
         model = Check
-        fields = ("author", "about_course", "order", "amount", "created", )
+        fields = ("author", "course", "order", "amount", "created", )

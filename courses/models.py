@@ -248,9 +248,3 @@ class Check(models.Model):
     
     def amount(self):
         return self.amount
-    
-    def about_course(self):
-        return {
-            "id": self.course.pk,
-            "name": self.course.name,
-        }
