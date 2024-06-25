@@ -125,7 +125,7 @@ PAYME: dict = {
     # 'PAYME_KEY': '?VigcWqFeadRdP1%12ansP&t?21xyEu9mdk&', # test
     'PAYME_KEY': '738mB%HI863IW%U1BBOwnDnz#qSEdPEqRW&Z', #production,
     'PAYME_URL': 'https://checkout.paycom.uz',
-    'PAYME_CALL_BACK_URL': 'https://3daa-185-213-230-162.ngrok-free.app',
+    'PAYME_CALL_BACK_URL': 'https://bested.uz',
     'PAYME_MIN_AMOUNT': '1', 
     'PAYME_ACCOUNT': 'order_id',
 }
