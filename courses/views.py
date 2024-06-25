@@ -35,6 +35,7 @@ def buy(check: Check):
         course = check.course
         user = check.author
         course.students.add(user)
+        course.save()
 
 
 @api_view(http_method_names=["POST"])
