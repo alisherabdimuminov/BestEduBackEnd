@@ -1,6 +1,7 @@
 from django.urls import path
 
 from .views import (
+    checks,
     buy_course,
     my_courses,
     end_lesson,
@@ -42,4 +43,5 @@ urlpatterns = [
     path("buy/", buy_course, name="buy_course"),
     path("order/", order_course, name="order_course"),
     path("payments/merchant/", PaymentCallBackApiView.as_view(), name="payments"),
+    path("checks/", checks, name="checks"),
 ]
