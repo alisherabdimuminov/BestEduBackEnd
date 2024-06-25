@@ -9,6 +9,7 @@ from .models import (
     Answer,
     Question,
     Quiz,
+    Check,
 )
 
 
@@ -45,3 +46,8 @@ class QuestionModelAdmin(ModelAdmin):
 @admin.register(Answer)
 class AnswerModelAdmin(ModelAdmin):
     list_display = ["value_1", "value_2", "is_correct"]
+
+
+@admin.register(Check)
+class CheckModelAdmin(ModelAdmin):
+    list_display = ["course", "author", "order", "status",]

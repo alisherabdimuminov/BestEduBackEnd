@@ -1,7 +1,7 @@
 from django.contrib import admin
 from unfold.admin import ModelAdmin
 
-from .models import User
+from .models import User, Order
 from .forms import UserModelCreateForm, UserModelUpdateForm
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
@@ -23,3 +23,8 @@ class UserModelAdmin(ModelAdmin):
     list_display = ["username", "first_name", "last_name", "activity"]
     search_fields = ["username", "first_name", "last_name", "middle_name"]
     list_filter = ["activity"]
+
+
+@admin.register(Order)
+class OrderModelAdmin(ModelAdmin):
+    list_display = ["pk", "amount", ]
