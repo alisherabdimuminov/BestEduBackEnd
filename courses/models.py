@@ -237,7 +237,7 @@ class Lesson(models.Model):
 
 class Check(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Foydalanuvchi")
-    course = models.ForeignKey(Module, on_delete=models.CASCADE, verbose_name="Module")
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name="Module")
     order = models.ForeignKey(Order, on_delete=models.CASCADE, verbose_name="Buyurtma raqami")
     status = models.CharField(max_length=2, choices=CHECK_STATUS_TYPE, verbose_name="Holati")
     created = models.DateTimeField(auto_now_add=True)
