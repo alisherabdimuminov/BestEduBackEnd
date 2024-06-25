@@ -306,10 +306,23 @@ def my_courses(request: HttpRequest):
     courses = []
     for course in Course.objects.all():
         print(request.user in course.students.all())
+        image = course.author.image
+        if image:
+            image = image.url
+        else:
+            image = None
         if request.user in course.students.all():
             courses.append({
                 "id": course.pk,
-                "percentage": course.percentage(request.user)
+                "percentage": course.percentage(request.user),
+                "author": {
+                    "id": course.author.pk,
+                    "username": course.author.username,
+                    "first_name": course.author.first_name,
+                    "last_name": course.author.last_name,
+                    "middle_name": course.author.middle_name,
+                    "image": image,
+                }
             })
     return Response({
         "status": "success",
