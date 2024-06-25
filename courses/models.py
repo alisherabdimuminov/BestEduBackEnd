@@ -17,9 +17,9 @@ QUESTION_TYPE = (
 )
 
 CHECK_STATUS_TYPE = (
-    (0, "Kutilmoqda"),
-    (1, "To'langan"),
-    (-1, "Bekor qilingan"),
+    ("0", "Kutilmoqda"),
+    ("1", "To'langan"),
+    ("-1", "Bekor qilingan"),
 )
 
 

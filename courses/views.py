@@ -31,11 +31,10 @@ from users.models import Order
 
 
 def buy(check: Check):
-    if check.status == 1 or check.status == "1":
-        course = check.course
-        user = check.author
-        course.students.add(user)
-        course.save()
+    course = check.course
+    user = check.author
+    course.students.add(user)
+    course.save()
 
 
 @api_view(http_method_names=["POST"])
@@ -109,7 +108,7 @@ class PaymentCallBackApiView(MerchantAPIView):
             check = Check.objects.filter(order=order)
             if check:
                 check = check.first()
-                check.status = "1"
+                check.status = 1
                 check.save()
                 buy(check=check)
         print("To'landi", "order_id:", order_id, "action:", action)
