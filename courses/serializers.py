@@ -188,4 +188,4 @@ class CheckModelSerializer(serializers.ModelSerializer):
     course = CourseModelOneSerializer(Course, many=False)
     class Meta:
         model = Check
-        fields = ("author", "course", "order", "created", )
+        fields = ("author", "about_course", "order", "amount", "created", )
