@@ -109,6 +109,8 @@ class PaymentCallBackApiView(MerchantAPIView):
             check = Check.objects.filter(order=order)
             if check:
                 check = check.first()
+                check.status = "1"
+                check.save()
                 buy(check=check)
         print("To'landi", "order_id:", order_id, "action:", action)
 
