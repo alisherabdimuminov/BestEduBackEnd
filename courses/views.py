@@ -363,7 +363,7 @@ def add_module(request: HttpRequest, course_id: int):
     })
 
 
-@api_view(http_method_names=["POST"])
+@api_view(http_method_names=["GET"])
 @permission_classes(permission_classes=[IsAuthenticated])
 @authentication_classes(authentication_classes=[TokenAuthentication])
 def checks(request: HttpRequest):
