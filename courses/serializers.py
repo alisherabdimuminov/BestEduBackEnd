@@ -10,7 +10,7 @@ from .models import (
     Subject,
     Check,
 )
-from users.models import User
+from users.models import User, Order
 
 
 class SubjectSerializer(serializers.ModelSerializer):
@@ -177,14 +177,22 @@ class LessonPostSerializer(serializers.ModelSerializer):
         model = Lesson
         fields = ("name", "module", "video", "duration", "resource", "type", "previous")
 
+
 class ModulePostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Module
         fields = ("name", "course", "required")
 
+
+class OrderModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = ("id", "amount", )
+
     
 class CheckModelSerializer(serializers.ModelSerializer):
     author = UserSerializer(User, many=False)
+    order = OrderModelSerializer(Order, many=False)
     class Meta:
         model = Check
-        fields = ("author", "course", "order", "created", )
+        fields = ("author", "course", "order", "status", "created", )
