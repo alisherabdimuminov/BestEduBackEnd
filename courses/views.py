@@ -314,6 +314,7 @@ def my_courses(request: HttpRequest):
         if request.user in course.students.all():
             courses.append({
                 "id": course.pk,
+                "name": course.name,
                 "percentage": course.percentage(request.user),
                 "author": {
                     "id": course.author.pk,
