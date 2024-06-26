@@ -7,6 +7,7 @@ from .views import (
     end_lesson,
     add_module,
     add_lesson,
+    create_test,
     order_course,
     create_course,
     update_course,
@@ -34,6 +35,7 @@ urlpatterns = [
     path('course/<int:course_id>/modules/module/<int:module_id>/lessons/lesson/<int:lesson_id>/', get_module_lesson, name="lesson"),
     path('course/<int:course_id>/modules/add_module/', add_module, name="add_module"),
     path('course/<int:course_id>/modules/module/<int:module_id>/add_lesson/', add_lesson, name="add_lesson"),
+    path('course/<int:course_id>/modules/module/<int:module_id>/add_test/', create_test, name="create_test"),
 
     path('create/', create_course, name="create_course"),
     path('course/<int:id>/update/', update_course, name="update_course"),

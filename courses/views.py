@@ -13,6 +13,9 @@ from .models import (
     Module,
     Lesson,
     Subject,
+    Quiz,
+    Answer,
+    Question,
 )
 from .serializers import (
     ModuleSerializer,
@@ -389,4 +392,91 @@ def checks(request: HttpRequest):
         "data": {
             "checks": checks.data,
         },
+    })
+
+
+@api_view(http_method_names=["POST"])
+@permission_classes(permission_classes=[IsAuthenticated])
+@authentication_classes(authentication_classes=[TokenAuthentication])
+def create_test(request: HttpRequest, course_id: int, module_id: int):
+    course = get_object_or_404(Course, pk=course_id)
+    module = get_object_or_404(Module, pk=module_id)
+    quiz = Quiz.objects.create(
+        name=request.data.get("quiz").get("name"),
+        passing_score=70
+    )
+    for q in request.data.get("quiz").get("questions"):
+        question = Question.objects.create(
+            question=q.get("question"),
+            type=q.get("type"),
+            score=5
+        )
+        if q.get("type") == "writable":
+            a = Answer.objects.create(
+                value_1=q.get("answer_1").get("value_1"),
+                is_correct=True
+            )
+            question.answers.add(a)
+            question.save()
+        else:
+            if q.get("type") == "one_select" or q.get("type") == "many_select":
+                a1 = Answer.objects.create(
+                    value_1=q.get("answer_1").get("value_1"),
+                    is_correct=q.get("answer_1").get("is_correct"),
+                )
+                a2 = Answer.objects.create(
+                    value_1=q.get("answer_2").get("value_1"),
+                    is_correct=q.get("answer_2").get("is_correct"),
+                )
+                a3 = Answer.objects.create(
+                    value_1=q.get("answer_3").get("value_1"),
+                    is_correct=q.get("answer_3").get("is_correct"),
+                )
+                a4 = Answer.objects.create(
+                    value_1=q.get("answer_4").get("value_1"),
+                    is_correct=q.get("answer_4").get("is_correct"),
+                )
+                question.answers.add(a1)
+                question.answers.add(a2)
+                question.answers.add(a3)
+                question.answers.add(a4)
+                question.save()
+            elif q.get("type") == "matchable":
+                a1 = Answer.objects.create(
+                    value_1=q.get("answer_1").get("value_1"),
+                    value_2=q.get("answer_1").get("value_2"),
+                    is_correct=q.get("answer_1").get("is_correct"),
+                )
+                a2 = Answer.objects.create(
+                    value_1=q.get("answer_2").get("value_1"),
+                    value_2=q.get("answer_2").get("value_2"),
+                    is_correct=q.get("answer_2").get("is_correct"),
+                )
+                a3 = Answer.objects.create(
+                    value_1=q.get("answer_2").get("value_1"),
+                    value_2=q.get("answer_3").get("value_2"),
+                    is_correct=q.get("answer_3").get("is_correct"),
+                )
+                a4 = Answer.objects.create(
+                    value_1=q.get("answer_4").get("value_1"),
+                    value_2=q.get("answer_4").get("value_2"),
+                    is_correct=q.get("answer_4").get("is_correct"),
+                )
+                question.answers.add(a1)
+                question.answers.add(a2)
+                question.answers.add(a3)
+                question.answers.add(a4)
+                question.save()
+        quiz.questions.add(question)
+        quiz.save()
+    lesson = Lesson.objects.create(
+        name=request.data.get("quiz").get("name"),
+        module=module,
+        type="quiz",
+        quiz=quiz
+    )
+    return Response({
+        "status": "success",
+        "errors": {},
+        "data": {},
     })
