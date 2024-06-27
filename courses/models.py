@@ -11,9 +11,9 @@ LESSON_TYPE = (
 
 QUESTION_TYPE = (
     ("one_select", "One select"),
-    ("many_select", "Multi select"),
+    ("many_select", "Many select"),
     ("matchable", "Matchable"),
-    ("writable", "Writeable")
+    ("writable", "Writable")
 )
 
 CHECK_STATUS_TYPE = (
