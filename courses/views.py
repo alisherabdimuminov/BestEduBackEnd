@@ -38,6 +38,10 @@ def buy(check: Check):
     course = check.course
     user = check.author
     course.students.add(user)
+    modules = Module.objects.filter(course=course)
+    module = modules.first()
+    module.students.add(user)
+    module.save()
     course.save()
 
 
