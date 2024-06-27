@@ -44,7 +44,7 @@ class Question(models.Model):
     def json(self) -> dict:
         answers = []
         for answer in self.answers.all():
-            if self.type == "writeable":
+            if self.type == "writable":
                 answers.append({
                     "value_1": answer.value_1,
                     "value_2": None,
@@ -66,7 +66,7 @@ class Question(models.Model):
                         "value_2": None,
                         "is_correct": False
                     })
-            elif self.type == "multi_select":
+            elif self.type == "many_select":
                 answers.append({
                     "value_1": answer.value_1,
                     "value_2": None,
