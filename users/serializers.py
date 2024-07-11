@@ -22,7 +22,7 @@ class UserSignUpSerializer(serializers.ModelSerializer):
 class UserPOSTSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["username", "first_name", "last_name", "middle_name", "bio", "image", "is_student"]
+        fields = ["username", "first_name", "last_name", "middle_name", "bio", "is_student"]
 
 class GeneratePayLinkSerializer(serializers.Serializer):
     order_id = serializers.IntegerField()

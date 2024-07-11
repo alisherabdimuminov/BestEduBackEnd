@@ -347,8 +347,7 @@ def my_courses(request: HttpRequest):
 def add_lesson(request: HttpRequest, course_id: int, module_id: int):
     course = get_object_or_404(Course, pk=course_id)
     module = get_object_or_404(Module, pk=module_id)
-    request.data["module"] = module.pk
-    lesson = LessonPostSerializer(Lesson, data=request.data)
+    lesson = LessonPostSerializer(Lesson, data=request.data, context={"module": module})
     if lesson.is_valid():
         l = lesson.create(lesson.validated_data)
         previous = Lesson.objects.filter(pk=request.data.get("previous"))
@@ -364,6 +363,24 @@ def add_lesson(request: HttpRequest, course_id: int, module_id: int):
         "data": {}
     })
 
+
+@api_view(http_method_names=["POST"])
+@permission_classes(permission_classes=[IsAuthenticated])
+@authentication_classes(authentication_classes=[TokenAuthentication])
+def edit_lesson(request: HttpRequest, course_id: int, module_id: int, lesson_id: int):
+    course = get_object_or_404(Course, pk=course_id)
+    module = get_object_or_404(Module, pk=module_id)
+    lesson = get_object_or_404(Lesson, pk=lesson_id)
+    lesson = LessonPostSerializer(lesson, data=request.data, context={"module": module})
+    if lesson.is_valid():
+        lesson.save()
+    else:
+        print(lesson.errors)
+    return Response({
+        "status": "success",
+        "errors": {},
+        "data": {}
+    })
 
 @api_view(http_method_names=["POST"])
 @permission_classes(permission_classes=[IsAuthenticated])
@@ -473,14 +490,35 @@ def create_test(request: HttpRequest, course_id: int, module_id: int):
                 question.save()
         quiz.questions.add(question)
         quiz.save()
-    lesson = Lesson.objects.create(
-        name=request.data.get("quiz").get("name"),
-        module=module,
-        type="quiz",
-        quiz=quiz
-    )
+    last_lesson = Lesson.objects.filter(module=module.pk)
+    if last_lesson:
+        last_lesson = last_lesson.last()
+        lesson = Lesson.objects.create(
+            name=request.data.get("quiz").get("name"),
+            module=module,
+            type="quiz",
+            quiz=quiz
+        )
+        lesson.previous = last_lesson
+        lesson.save()
+        last_lesson.next = lesson
+        last_lesson.save()
     return Response({
         "status": "success",
         "errors": {},
         "data": {},
+    })
+
+
+
+@api_view(http_method_names=["POST"])
+@permission_classes(permission_classes=[IsAuthenticated])
+@authentication_classes(authentication_classes=[TokenAuthentication])
+def billing_reports(request: HttpRequest):
+    reports_obj = Check.objects.filter(author=request.user)
+    reports = CheckModelSerializer(reports_obj, many=True)
+    return Response({
+        "status": "success",
+        "errors": {},
+        "data": reports.data,
     })

@@ -205,3 +205,20 @@ def logout(request: HttpRequest):
         "errors": {},
         "data": {}
     })
+
+
+@api_view(http_method_names=["POST"])
+@authentication_classes(authentication_classes=[TokenAuthentication])
+@permission_classes(permission_classes=[IsAuthenticated])
+def upload_image(request: HttpRequest):
+    image = request.FILES.get("image")
+    user = request.user
+    user.image = image
+    user.save()
+    return Response({
+        "status": "success",
+        "errors": {},
+        "data": {
+            "message": "rasm cho'tki yuklandi."
+        }
+    })

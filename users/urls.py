@@ -9,6 +9,7 @@ from .views import (
     logout,
     get_users_count,
     change_password,
+    upload_image,
 )
 
 
@@ -24,4 +25,5 @@ urlpatterns = [
 
     path('count/', get_users_count, name="get_users_count"),
     path('change_password/', change_password, name="change_password"),
+    path('upload_image/', upload_image, name="upload_image"),
 ]

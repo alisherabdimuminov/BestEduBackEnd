@@ -173,9 +173,26 @@ class CourseCreateSerializer(serializers.ModelSerializer):
 
 
 class LessonPostSerializer(serializers.ModelSerializer):
+    resource = serializers.FileField(required=False)
+    def create(self, validated_data):
+        module_id = self.context.get("module")
+        print(module_id)
+        module = Module.objects.get(pk=module_id.pk)
+        last_lesson = Lesson.objects.filter(module=module.pk)
+        if last_lesson:
+            last_lesson = last_lesson.last()
+            validated_data["module"] = module
+            lesson = Lesson.objects.create(**validated_data)
+            lesson.previous = last_lesson
+            lesson.save()
+            last_lesson.next = lesson
+            last_lesson.save()
+        else:
+            lesson = Lesson.objects.create(**validated_data)
+        return lesson
     class Meta:
         model = Lesson
-        fields = ("name", "module", "video", "duration", "resource", "type", "previous")
+        fields = ("name", "video", "duration", "resource", "type", "previous")
 
 
 class ModulePostSerializer(serializers.ModelSerializer):
