@@ -206,10 +206,17 @@ class OrderModelSerializer(serializers.ModelSerializer):
         model = Order
         fields = ("id", "amount", )
 
+
+class CourseModelSerializerForCheck(serializers.ModelSerializer):
+    class Meta:
+        model = Course
+        fields = ("id", "name", "price", )
+
     
 class CheckModelSerializer(serializers.ModelSerializer):
     author = UserSerializer(User, many=False)
     order = OrderModelSerializer(Order, many=False)
+    course = CourseModelSerializerForCheck(Course, many=False)
     class Meta:
         model = Check
         fields = ("author", "course", "order", "status", "created", )

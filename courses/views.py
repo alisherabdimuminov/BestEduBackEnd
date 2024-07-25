@@ -405,7 +405,8 @@ def add_module(request: HttpRequest, course_id: int):
 @permission_classes(permission_classes=[IsAuthenticated])
 @authentication_classes(authentication_classes=[TokenAuthentication])
 def checks(request: HttpRequest):
-    checks_obj = Check.objects.all()
+    user = request.user
+    checks_obj = Check.objects.filter(author=user)
     checks = CheckModelSerializer(checks_obj, many=True)
     return Response({
         "status": "success",
