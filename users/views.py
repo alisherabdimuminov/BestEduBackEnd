@@ -226,6 +226,6 @@ def upload_image(request: HttpRequest):
         "errors": {},
         "data": {
             "message": "rasm cho'tki yuklandi.",
-            "image": user_serializer.image.url,
+            "image": user_serializer.data.image.url,
         }
     })
