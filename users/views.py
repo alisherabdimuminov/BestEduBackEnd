@@ -65,7 +65,7 @@ def get_one_user(request: HttpRequest, id):
         "errors": {},
         "data": {
             "user": user,
-            "ratings": ratings
+            "ratings": ratings.data
         }
     })
 
