@@ -197,6 +197,9 @@ class Module(models.Model):
                 count += 1
         return count
     
+    def count_quizzes(self):
+        return Lesson.objects.filter(type="quiz").count()
+    
     def video_length(self) -> int:
         return Lesson.objects.filter(module=self).aggregate(duration=models.Sum("duration")).get("duration") or 0
     

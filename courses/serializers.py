@@ -122,14 +122,23 @@ class CourseModelAllSerializer(serializers.ModelSerializer):
             return False
         return False
     
+    def quizzes(self, obj):
+        modules = Module.objects.filter(course=obj)
+        count = 0
+        for module in modules:
+            count += module.count_quizzes()
+        return count
+    
     is_open = serializers.SerializerMethodField("get_user")
+    quizzes_count = serializers.SerializerMethodField("quizzes")
 
     class Meta:
         model = Course
         fields = (
             "id", "name", "author_", "image", 
             "subject_", "description", "price", 
-            "feedback", "count_modules", "count_students", "count_lessons", "length", "is_open"
+            "feedback", "count_modules", "count_students", "count_lessons", "length", "is_open",
+            "quizzes_count",
         )
 
 class CourseModelOneSerializer(serializers.ModelSerializer):
@@ -142,7 +151,15 @@ class CourseModelOneSerializer(serializers.ModelSerializer):
             return False
         return False
     
+    def quizzes(self, obj):
+        modules = Module.objects.filter(course=obj)
+        count = 0
+        for module in modules:
+            count += module.count_quizzes()
+        return count
+    
     is_open = serializers.SerializerMethodField("get_user")
+    quizzes_count = serializers.SerializerMethodField("quizzes")
     students = UserSerializer(User, many=True)
     feedbackers = UserSerializer(User, many=True)
     modules = ModuleSerializer(Module, many=True)
@@ -152,7 +169,7 @@ class CourseModelOneSerializer(serializers.ModelSerializer):
             "name", "author_", "image", "subject_", 
             "description", "price", "feedback", 
             "count_modules", "count_students", "students", "count_lessons", "length", "feedbackers",
-            "modules", "is_open",
+            "modules", "is_open", "quizzes_count",
             )
 
 
