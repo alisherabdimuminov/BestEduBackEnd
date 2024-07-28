@@ -1,7 +1,9 @@
 from django.urls import path
 
 from .views import (
+    rate,
     checks,
+    ratings,
     buy_course,
     my_courses,
     end_lesson,
@@ -50,4 +52,7 @@ urlpatterns = [
     path("payments/merchant/", PaymentCallBackApiView.as_view(), name="payments"),
     path("checks/", checks, name="checks"),
     path("billing_reports/", checks, name="billing_reports"),
+
+    path("ratings/", ratings, name="ratings"),
+    path("rate/", rate, name="rate"),
 ]
