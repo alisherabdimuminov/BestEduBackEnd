@@ -207,7 +207,7 @@ class Module(models.Model):
 class Lesson(models.Model):
     name = models.CharField(max_length=500)
     module = models.ForeignKey(Module, on_delete=models.CASCADE)
-    video = models.URLField(max_length=5000, null=True, blank=True)
+    video = models.CharField(max_length=5000, null=True, blank=True)
     duration =  models.IntegerField(null=True, blank=True)
     resource = models.FileField(upload_to="files/lessons/", null=True, blank=True)
     quiz = models.ForeignKey(Quiz, on_delete=models.SET_NULL, null=True, blank=True)
