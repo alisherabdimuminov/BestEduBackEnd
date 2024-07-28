@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from django.http import HttpRequest
 from payme.views import MerchantAPIView
 from rest_framework.response import Response
@@ -16,8 +17,11 @@ from .models import (
     Quiz,
     Answer,
     Question,
+    Rating,
+    CourseRating,
 )
 from .serializers import (
+    CourseRatingModelSerializer,
     ModuleSerializer,
     SubjectSerializer,
     ModulePostSerializer,
@@ -41,6 +45,7 @@ def buy(check: Check):
     modules = Module.objects.filter(course=course)
     module = modules.first()
     module.students.add(user)
+    course_rating = CourseRating.objects.create(author=user, course=course, score=0)
     module.save()
     course.save()
 
@@ -522,4 +527,66 @@ def billing_reports(request: HttpRequest):
         "status": "success",
         "errors": {},
         "data": reports.data,
+    })
+
+
+@api_view(http_method_names=["POST"])
+@permission_classes(permission_classes=[IsAuthenticated])
+@authentication_classes(authentication_classes=[TokenAuthentication])
+def rate(request: HttpRequest):
+    course_id = request.data.get("course") or 0
+    module_id = request.data.get("module") or 0
+    lesson_id = request.data.get("lesson") or 0
+    score = request.data.get("score")
+    percent = request.data.get("percent")
+    course = Course.objects.get(pk=course_id)
+    module = Module.objects.get(pk=module_id)
+    lesson = Lesson.objects.get(pk=lesson_id)
+    course_rating = CourseRating.objects.filter(author=request.user, course=course).first()
+    course_rating.score += score
+    course_rating.save()
+    rating = Rating.objects.create(
+        author=request.user,
+        course=course,
+        module=module,
+        lesson=lesson,
+        score=score,
+        percent=percent
+    )
+    return Response({
+        "status": "success",
+        "errors": {},
+        "data": {
+            "message": "Saved!"
+        }
+    })
+
+
+@api_view(http_method_names=["GET"])
+@permission_classes(permission_classes=[IsAuthenticated])
+@authentication_classes(authentication_classes=[TokenAuthentication])
+def ratings(request: HttpRequest):
+    course_id = request.data.get("course")
+    type = request.data.get("type") or "monthly"
+    course = Course.objects.get(pk=course_id)
+    now = datetime.now()
+    now_as_str = now.strftime("%Y-%m-%d")
+    ratings_obj = CourseRating.objects.filter(course=course, created=now)
+    if type == "monthly":
+        one_month_ago = now - timedelta(days=30)
+        one_month_ago_as_str = one_month_ago.strftime("%Y-%m-%d")
+        ratings_obj = CourseRating.objects.filter(course=course, created__range=[one_month_ago_as_str, now_as_str])
+    elif type == "weekly":
+        one_week_ago = now - timedelta(days=7)
+        one_week_ago_as_str = one_week_ago.strftime("%Y-%m-%d")
+        ratings_obj = CourseRating.objects.filter(course=course, created__range=[one_week_ago_as_str, now_as_str])
+    else:
+        ratings_obj = Rating.objects.filter(course=course, created=now)
+    ratings = CourseRatingModelSerializer(ratings_obj, many=True)
+    return Response({
+        "status": "success",
+        "errors": {},
+        "data": {
+            "ratings": ratings.data
+        },
     })

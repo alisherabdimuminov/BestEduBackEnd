@@ -8,6 +8,7 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 
 from .models import User
 from .serializers import UserGETSerializer, UserPOSTSerializer, UserSignUpSerializer
+from courses.serializers import RatingModelSerializer
 
 
 # get all users handler
@@ -56,11 +57,13 @@ def get_users_count(request: HttpRequest):
 def get_one_user(request: HttpRequest, id):
     user_queryset = get_object_or_404(User, pk=id)
     user = UserGETSerializer(user_queryset).data
+    ratings = RatingModelSerializer(author=request.user, many=True)
     return Response({
         "status": "success",
         "errors": {},
         "data": {
-            "user": user
+            "user": user,
+            "ratings": ratings
         }
     })
 
@@ -215,10 +218,12 @@ def upload_image(request: HttpRequest):
     user = request.user
     user.image = image
     user.save()
+    user_serializer = UserGETSerializer(user, many=False)
     return Response({
         "status": "success",
         "errors": {},
         "data": {
-            "message": "rasm cho'tki yuklandi."
+            "message": "rasm cho'tki yuklandi.",
+            "image": user_serializer.image.url,
         }
     })

@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from .models import (
     Course,
+    CourseRating,
     Module,
     Lesson,
     Quiz,
@@ -9,6 +10,7 @@ from .models import (
     Answer,
     Subject,
     Check,
+    Rating,
 )
 from users.models import User, Order
 
@@ -220,3 +222,18 @@ class CheckModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Check
         fields = ("author", "course", "order", "status", "created", )
+
+
+class RatingModelSerializer(serializers.ModelSerializer):
+    course = CourseModelSerializerForCheck(Course, many=False)
+    class Meta:
+        model = Rating
+        fields = ("course", "module", "lesson", "author", "score", "")
+
+
+class CourseRatingModelSerializer(serializers.ModelSerializer):
+    course = CourseModelSerializerForCheck(Course, many=False)
+    author = UserSerializer(User, many=False)
+    class Meta:
+        model = CourseRating
+        fields = ("author", "course", "score", )
