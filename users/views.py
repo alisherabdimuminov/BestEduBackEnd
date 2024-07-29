@@ -9,7 +9,7 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from .models import User
 from .serializers import UserGETSerializer, UserPOSTSerializer, UserSignUpSerializer
 from courses.serializers import RatingModelSerializer
-from courses.models import CourseRating
+from courses.models import CourseRating, Rating
 
 
 # get all users handler
@@ -58,8 +58,8 @@ def get_users_count(request: HttpRequest):
 def get_one_user(request: HttpRequest, id):
     user_queryset = get_object_or_404(User, pk=id)
     user = UserGETSerializer(user_queryset).data
-    course_rating = CourseRating.objects.filter(author=request.user).first()
-    ratings = RatingModelSerializer(course_rating, many=True)
+    ratings_obj = Rating.objects.filter(author=user)
+    ratings = RatingModelSerializer(ratings_obj, many=True)
     return Response({
         "status": "success",
         "errors": {},
