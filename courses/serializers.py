@@ -130,7 +130,7 @@ class CourseModelAllSerializer(serializers.ModelSerializer):
         return count
     
     is_open = serializers.SerializerMethodField("get_user")
-    quizzes_count = serializers.SerializerMethodField("quizzes")
+    count_quizzes = serializers.SerializerMethodField("quizzes")
 
     class Meta:
         model = Course
@@ -138,7 +138,7 @@ class CourseModelAllSerializer(serializers.ModelSerializer):
             "id", "name", "author_", "image", 
             "subject_", "description", "price", 
             "feedback", "count_modules", "count_students", "count_lessons", "length", "is_open",
-            "quizzes_count",
+            "count_quizzes",
         )
 
 class CourseModelOneSerializer(serializers.ModelSerializer):
