@@ -58,7 +58,7 @@ def get_users_count(request: HttpRequest):
 def get_one_user(request: HttpRequest, id):
     user_queryset = get_object_or_404(User, pk=id)
     user = UserGETSerializer(user_queryset).data
-    ratings_obj = Rating.objects.filter(author=user)
+    ratings_obj = Rating.objects.filter(author=user_queryset)
     ratings = RatingModelSerializer(ratings_obj, many=True)
     return Response({
         "status": "success",
