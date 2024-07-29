@@ -159,7 +159,7 @@ class CourseModelOneSerializer(serializers.ModelSerializer):
         return count
     
     is_open = serializers.SerializerMethodField("get_user")
-    quizzes_count = serializers.SerializerMethodField("quizzes")
+    count_quizzes = serializers.SerializerMethodField("quizzes")
     students = UserSerializer(User, many=True)
     feedbackers = UserSerializer(User, many=True)
     modules = ModuleSerializer(Module, many=True)
@@ -169,7 +169,7 @@ class CourseModelOneSerializer(serializers.ModelSerializer):
             "name", "author_", "image", "subject_", 
             "description", "price", "feedback", 
             "count_modules", "count_students", "students", "count_lessons", "length", "feedbackers",
-            "modules", "is_open", "quizzes_count",
+            "modules", "is_open", "count_quizzes",
             )
 
 
