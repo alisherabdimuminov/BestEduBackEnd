@@ -98,22 +98,41 @@ def update_user(request: HttpRequest, id):
 @authentication_classes(authentication_classes=[TokenAuthentication])
 @permission_classes(permission_classes=[IsAuthenticated])
 def change_password(request: HttpRequest):
-    password = request.data.get("password")
-    if not password:
+    user = request.user
+    old_password = request.data.get("old_password")
+    new_password = request.data.get("new_password")
+    
+    if not old_password:
         return Response({
             "status": "error",
             "errors": {
-                1: "password is not found",
+                1: "old_password topilmadi.",
             }
         })
-    user = request.user
-    user.set_password(raw_password=password)
-    user.save()
-    return Response({
-        "status": "success",
-        "errors": {},
-        "data": {}
-    })
+    if not new_password:
+        return Response({
+            "status": "error",
+            "errors": {
+                1: "new_password topilmadi.",
+            }
+        })
+    check = user.check_password(old_password)
+    if check:
+        user.set_password(raw_password=new_password)
+        user.save()
+        return Response({
+            "status": "success",
+            "errors": {},
+            "data": {}
+        })
+    else:
+        return Response({
+            "status": "error",
+            "errors": {
+                "old_password": "Eski kalit so'z xato kiritildi."
+            },
+            "data": {}
+        })
 
 
 # login handler
