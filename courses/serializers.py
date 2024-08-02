@@ -245,7 +245,7 @@ class RatingModelSerializer(serializers.ModelSerializer):
     course = CourseModelSerializerForCheck(Course, many=False)
     class Meta:
         model = Rating
-        fields = ("course", "module", "lesson", "author", "score",)
+        fields = ("course", "module", "lesson", "score",)
 
 
 class CourseRatingModelSerializer(serializers.ModelSerializer):

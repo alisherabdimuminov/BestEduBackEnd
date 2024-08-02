@@ -28,6 +28,7 @@ from .serializers import (
     CheckModelSerializer,
     LessonPostSerializer,
     LessonModelSerializer,
+    RatingModelSerializer,
     CourseCreateSerializer,
     LessonModuleSerializer,
     CourseModelAllSerializer,
@@ -572,6 +573,22 @@ def rate(request: HttpRequest):
             "message": "Saved!"
         }
     })
+
+
+@api_view(http_method_names=["POST"])
+@permission_classes(permission_classes=[IsAuthenticated])
+@authentication_classes(authentication_classes=[TokenAuthentication])
+def rates(request: HttpRequest):
+    ratings_obj = Rating.objects.filter(author=request.user)
+    ratings = RatingModelSerializer(ratings_obj, many=True)
+    return Response({
+        "status": "success",
+        "errors": {},
+        "data": {
+            "ratings": ratings.data
+        }
+    })
+
 
 
 @api_view(http_method_names=["POST"])

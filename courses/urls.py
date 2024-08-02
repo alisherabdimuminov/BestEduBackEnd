@@ -2,6 +2,7 @@ from django.urls import path
 
 from .views import (
     rate,
+    rates,
     checks,
     ratings,
     buy_course,
@@ -58,4 +59,5 @@ urlpatterns = [
     path("rate/", rate, name="rate"),
 
     path("for_rating/", get_courses_for_rating, name="get_courses_for_ratings"),
+    path("rates/", rates, name="rates"),
 ]
