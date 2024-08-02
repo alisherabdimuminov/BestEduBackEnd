@@ -575,7 +575,7 @@ def rate(request: HttpRequest):
     })
 
 
-@api_view(http_method_names=["POST"])
+@api_view(http_method_names=["GET"])
 @permission_classes(permission_classes=[IsAuthenticated])
 @authentication_classes(authentication_classes=[TokenAuthentication])
 def rates(request: HttpRequest):
