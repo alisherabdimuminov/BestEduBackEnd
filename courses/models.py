@@ -122,7 +122,7 @@ class Course(models.Model):
     def author_(self):
         image = self.author.image
         if image:
-            image = self.author.image
+            image = self.author.image.url
         else:
             image = None
         return {
