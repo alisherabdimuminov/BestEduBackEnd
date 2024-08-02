@@ -32,6 +32,7 @@ from .serializers import (
     LessonModuleSerializer,
     CourseModelAllSerializer,
     CourseModelOneSerializer,
+    CourseForRatingSerializer,
 )
 from users.models import Order
 
@@ -589,4 +590,20 @@ def ratings(request: HttpRequest):
         "data": {
             "ratings": ratings.data
         },
+    })
+
+
+
+@api_view(http_method_names=["GET"])
+@permission_classes(permission_classes=[IsAuthenticated])
+@authentication_classes(authentication_classes=[TokenAuthentication])
+def get_courses_for_rating(request: HttpRequest):
+    courses_obj = Course.objects.all()
+    courses = CourseForRatingSerializer(courses_obj, many=True)
+    return Response({
+        "status": "success",
+        "errors": {},
+        "data": {
+            "courses": courses.data
+        }
     })

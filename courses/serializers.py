@@ -254,3 +254,10 @@ class CourseRatingModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = CourseRating
         fields = ("author", "course", "score", )
+
+
+
+class CourseForRatingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Course
+        fields = ("id", "name", )

@@ -22,6 +22,7 @@ from .views import (
     get_course_module,
     get_module_lessons,
     get_course_modules,
+    get_courses_for_rating,
     PaymentCallBackApiView,
 )
 
@@ -51,8 +52,10 @@ urlpatterns = [
     path("order/", order_course, name="order_course"),
     path("payments/merchant/", PaymentCallBackApiView.as_view(), name="payments"),
     path("checks/", checks, name="checks"),
-    path("billing_reports/", checks, name="billing_reports"),
+    path("billing_reports/", billing_reports, name="billing_reports"),
 
     path("ratings/", ratings, name="ratings"),
     path("rate/", rate, name="rate"),
+
+    path("for_rating/", get_courses_for_rating, name="get_courses_for_ratings"),
 ]
