@@ -120,9 +120,9 @@ class Course(models.Model):
         return self.name
     
     def author_(self):
-        image = self.image
+        image = self.author.image
         if image:
-            image = self.image.url
+            image = self.author.image
         else:
             image = None
         return {
