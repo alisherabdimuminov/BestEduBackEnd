@@ -257,6 +257,17 @@ def get_module_lesson(request: HttpRequest, course_id: int, module_id: int, less
 def end_lesson(request: HttpRequest):
     lesson_id = request.data.get("id")
     lesson = get_object_or_404(Lesson, pk=lesson_id)
+    is_last_lesson = Lesson.objects.filter(module=lesson.module).last()
+    if lesson.pk == is_last_lesson.pk:
+        modules = Module.objects.filter(course=lesson.module.course)
+        next_module = None
+        for i in modules:
+            if i.pk == lesson.module.pk:
+                try:
+                    next_module = Module.objects.get(pk=int(i.pk)+1)
+                    next_module.students.add(request.user)
+                except:
+                    pass
     lesson.finishers.add(request.user)
     return Response({
         "status": "success",
