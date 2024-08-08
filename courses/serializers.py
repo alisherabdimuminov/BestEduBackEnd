@@ -195,12 +195,11 @@ class LessonPostSerializer(serializers.ModelSerializer):
     resource = serializers.FileField(required=False)
     def create(self, validated_data):
         module_id = self.context.get("module")
-        print(module_id)
         module = Module.objects.get(pk=module_id.pk)
         last_lesson = Lesson.objects.filter(module=module.pk)
+        validated_data["module"] = module
         if last_lesson:
             last_lesson = last_lesson.last()
-            validated_data["module"] = module
             lesson = Lesson.objects.create(**validated_data)
             lesson.previous = last_lesson
             lesson.save()
