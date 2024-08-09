@@ -275,6 +275,7 @@ def end_lesson(request: HttpRequest):
                     i.students.add(request.user)
                     i.save()
                     finded = False
+                    print("saved")
                     break
                 except Exception as e:
                     print(e)
