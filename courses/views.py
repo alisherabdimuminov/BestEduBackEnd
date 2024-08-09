@@ -271,9 +271,12 @@ def end_lesson(request: HttpRequest):
                     try:
                         i.students.add(request.user)
                         finded = False
-                    except:
+                        break
+                    except Exception as e:
+                        print(e)
                         pass
                 finded = True
+                print("set", finded)
     lesson.finishers.add(request.user)
     return Response({
         "status": "success",
