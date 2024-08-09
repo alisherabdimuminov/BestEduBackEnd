@@ -269,7 +269,7 @@ def end_lesson(request: HttpRequest):
             if i.pk == lesson.module.pk:
                 finded = True
                 print("set", finded)
-            if finded:
+            elif finded:
                 print("topildi")
                 try:
                     i.students.add(request.user)
