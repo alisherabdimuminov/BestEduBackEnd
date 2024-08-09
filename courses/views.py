@@ -262,9 +262,10 @@ def end_lesson(request: HttpRequest):
     print(is_last_lesson)
     if lesson.pk == is_last_lesson.pk:
         modules = Module.objects.filter(course=lesson.module.course)
-        next_module = None
+        print(modules)
         finded = False
         for i in modules:
+            print(i, lesson.module)
             if i.pk == lesson.module.pk:
                 if finded:
                     try:
@@ -497,7 +498,7 @@ def create_test(request: HttpRequest, course_id: int, module_id: int):
                     is_correct=q.get("answer_2").get("is_correct"),
                 )
                 a3 = Answer.objects.create(
-                    value_1=q.get("answer_2").get("value_1"),
+                    value_1=q.get("answer_3").get("value_1"),
                     value_2=q.get("answer_3").get("value_2"),
                     is_correct=q.get("answer_3").get("is_correct"),
                 )
