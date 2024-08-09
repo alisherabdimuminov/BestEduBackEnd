@@ -263,13 +263,16 @@ def end_lesson(request: HttpRequest):
     if lesson.pk == is_last_lesson.pk:
         modules = Module.objects.filter(course=lesson.module.course)
         next_module = None
+        finded = False
         for i in modules:
             if i.pk == lesson.module.pk:
-                try:
-                    next_module = Module.objects.get(pk=int(i.pk)+1)
-                    next_module.students.add(request.user)
-                except:
-                    pass
+                if finded:
+                    try:
+                        i.students.add(request.user)
+                        finded = False
+                    except:
+                        pass
+                finded = True
     lesson.finishers.add(request.user)
     return Response({
         "status": "success",
