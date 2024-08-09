@@ -267,18 +267,18 @@ def end_lesson(request: HttpRequest):
         for i in modules:
             print(i, lesson.module)
             if i.pk == lesson.module.pk:
-                if finded:
-                    print("topildi")
-                    try:
-                        i.students.add(request.user)
-                        i.save()
-                        finded = False
-                        break
-                    except Exception as e:
-                        print(e)
-                        pass
                 finded = True
                 print("set", finded)
+            if finded:
+                print("topildi")
+                try:
+                    i.students.add(request.user)
+                    i.save()
+                    finded = False
+                    break
+                except Exception as e:
+                    print(e)
+                    pass
     lesson.finishers.add(request.user)
     return Response({
         "status": "success",
