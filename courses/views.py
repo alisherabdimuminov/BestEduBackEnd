@@ -268,8 +268,10 @@ def end_lesson(request: HttpRequest):
             print(i, lesson.module)
             if i.pk == lesson.module.pk:
                 if finded:
+                    print("topildi")
                     try:
                         i.students.add(request.user)
+                        i.save()
                         finded = False
                         break
                     except Exception as e:
